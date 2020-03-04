@@ -8423,7 +8423,7 @@ var login = /*#__PURE__*/function () {
           case 3:
             res = _context.sent;
 
-            // console.log(res);
+            //console.log(res);
             if (res.data.status === 'success') {
               (0, _alerts.default)('success', 'Logged in successfully!');
               window.setTimeout(function () {
