@@ -1,6 +1,6 @@
 /*eslint-disable */
 
-exports.displayMap = locations => {
+export default locations => {
     mapboxgl.accessToken =
         'pk.eyJ1IjoidHVhbmxlMjA3IiwiYSI6ImNrNzVvNG96MzBoZmIzbXNiMHhmb2J6OGsifQ.hDb2Uf0IHIHaeFbtDqxIYQ';
 
