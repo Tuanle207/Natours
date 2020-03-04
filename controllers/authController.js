@@ -18,7 +18,7 @@ const createSendToken = (user, statusCode, res) => {
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true
+        httpOnly: true // can NOT manipulate the cookies in the browser
     };
 
     if (process.env.NODE_ENV === 'production') {
@@ -68,6 +68,14 @@ exports.login = catchAsync(async (req, res, next) => {
     // 3. If everything is ok send token to the client
     createSendToken(user, 200, res);
 });
+
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedOut', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.status(200).json({ status: 'success' });
+};
 
 exports.protect = catchAsync(async (req, res, next) => {
     // 1. Getting the token and check if it's exists
@@ -121,34 +129,36 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // Check if user has already loggined, used for rendering view
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
     // 1. Getting the token and check if it's exists
     if (req.cookies.jwt) {
-        //console.log(token);
+        try {
+            // 2. Verification token
+            const decoded = await promisify(jwt.verify)(
+                req.cookies.jwt,
+                process.env.JWT_SECRET
+            );
+            //console.log(decoded);
 
-        // 2. Verification token
-        const decoded = await promisify(jwt.verify)(
-            req.cookies.jwt,
-            process.env.JWT_SECRET
-        );
-        //console.log(decoded);
+            // 3. Check the user still exists
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
 
-        // 3. Check the user still exists
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) {
+            // 4. Check if the user change password after the token was issued
+            if (currentUser.changePasswordAfter(decoded.iat)) {
+                return next();
+            }
+            // THERE IS A LOGGINED USER
+            res.locals.user = currentUser; // res.local <-- pug template will have access to this object
+            return next();
+        } catch (e) {
             return next();
         }
-
-        // 4. Check if the user change password after the token was issued
-        if (currentUser.changePasswordAfter(decoded.iat)) {
-            return next();
-        }
-        // THERE IS A LOGGINED USER
-        res.locals.user = currentUser; // res.local <-- pug template will have access to this object
-        return next();
     }
     next();
-});
+};
 
 // Using closures
 exports.restrictTo = (...roles) => {

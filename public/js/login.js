@@ -3,7 +3,7 @@ import axios from 'axios';
 import showAlert from './alerts';
 
 // export default object = export object
-export default async (email, password) => {
+export const login = async (email, password) => {
     try {
         const res = await axios({
             method: 'post',
@@ -13,7 +13,7 @@ export default async (email, password) => {
                 password
             }
         });
-        console.log(res);
+        // console.log(res);
 
         if (res.data.status === 'success') {
             showAlert('success', 'Logged in successfully!');
@@ -23,5 +23,19 @@ export default async (email, password) => {
         }
     } catch (e) {
         showAlert('error', e.response.data.message);
+    }
+};
+
+export const logout = async () => {
+    try {
+        const res = await axios({
+            method: 'get',
+            url: 'http://localhost:3000/api/v1/users/logout'
+        });
+        if (res.data.status === 'success') {
+            location.reload(true); // reload page coming from server
+        }
+    } catch (e) {
+        showAlert('error', 'Error logging out! Try again!');
     }
 };
