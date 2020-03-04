@@ -3,3 +3,4 @@ dev-data/
 /public/overview.html
 /public/tour.html
 /config.env
+.cache

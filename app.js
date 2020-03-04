@@ -70,10 +70,10 @@ app.use(
 // request---------middleware(even routers) stack----->response
 
 // just for testing
-app.use((req, res, next) => {
-    console.log(req.cookies);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log(req.cookies);
+//     next();
+// });
 
 // ROUTERS
 
