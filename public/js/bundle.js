@@ -8814,7 +8814,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // DOM ELEMENTS
 var mapBox = document.getElementById('map');
-var loginForm = document.querySelector('.form');
+var loginForm = document.querySelector('.form--login');
 var logoutBtn = document.querySelector('.nav__el--logout'); // VALUES
 
 var email = document.getElementById('email');
