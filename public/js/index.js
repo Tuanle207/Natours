@@ -2,13 +2,14 @@
 import '@babel/polyfill';
 import { login, logout } from './login';
 import displayMap from './mapbox';
-import { updateUserInfo } from './updateUserData';
+import { updateUserData } from './updateUserData';
 
 // DOM ELEMENTS
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
-const updateUserInfoForm = document.querySelector('.form.form-user-data');
+const updateUserInfoForm = document.querySelector('.form-user-data');
+const updateUserPasswordForm = document.querySelector('.form-user-password');
 
 // MAP BOX
 if (mapBox) {
@@ -38,8 +39,30 @@ if (logoutBtn) {
 if (updateUserInfoForm) {
     updateUserInfoForm.addEventListener('submit', e => {
         e.preventDefault();
-        const name = document.getElementById('name');
-        const email = document.getElementById('email');
-        updateUserInfo(name.value, email.value);
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        updateUserData({ name, email }, 'data');
+    });
+}
+
+if (updateUserPasswordForm) {
+    updateUserPasswordForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        document.querySelector('.btn--save-password').textContent =
+            'Updating...';
+        const password = document.getElementById('password-current').value;
+        const newPassword = document.getElementById('password').value;
+        const passwordConfirm = document.getElementById('password-confirm')
+            .value;
+        await updateUserData(
+            { password, newPassword, passwordConfirm },
+            'password'
+        );
+        document.querySelector('.btn--save-password').textContent =
+            'Save Password';
+
+        document.getElementById('password-current').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('password-confirm').value = '';
     });
 }

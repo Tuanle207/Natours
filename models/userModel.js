@@ -47,16 +47,16 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// //Automatically encrypt the password before save the doccument
-// userSchema.pre('save', async function(next) {
-//     //run before save or create function
-//     if (!this.isModified('password')) return next();
+//Automatically encrypt the password before save the doccument
+userSchema.pre('save', async function(next) {
+    //run before save or create function
+    if (!this.isModified('password')) return next();
 
-//     this.password = await bcrypt.hash(this.password, 12); // -->encrypt password
-//     this.passwordConfirm = undefined; // --> actually not stored in the database
+    this.password = await bcrypt.hash(this.password, 12); // -->encrypt password
+    this.passwordConfirm = undefined; // --> actually not stored in the database
 
-//     next();
-// });
+    next();
+});
 
 // // Automatically change passwordChangedAt properties before save doccument
 // userSchema.pre('save', async function(next) {
