@@ -59,12 +59,12 @@ userSchema.pre('save', async function(next) {
 });
 
 // // Automatically change passwordChangedAt properties before save doccument
-// userSchema.pre('save', async function(next) {
-//     if (!this.isModified('password') || this.isNew) return next();
-//     this.passwordChangedAt = Date.now() - 1000;
-//     //Make sure that passwordChangedAtTimestamp is create before the tokenTimeExpireStamp
-//     next();
-// });
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password') || this.isNew) return next();
+    this.passwordChangedAt = Date.now() - 1000;
+    //Make sure that passwordChangedAtTimestamp is create before the tokenTimeExpireStamp
+    next();
+});
 
 // Any string start with find
 userSchema.pre(/^find/, function(next) {
